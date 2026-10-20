@@ -1,0 +1,6 @@
+PASS valid -> null
+PASS wrong payee -> payee != payTo
+PASS wrong amount -> amount != price
+PASS wrong token -> receiver != token contract
+PASS wrong method -> method must be ft_transfer
+PASS big deposit -> deposit must be exactly 1 yocto

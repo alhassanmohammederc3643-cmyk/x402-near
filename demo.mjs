@@ -1,0 +1,21 @@
+import { startFacilitator } from './facilitator.mjs';
+import { startSeller } from './seller.mjs';
+import { PolicyBuyer } from './buyer.mjs';
+import { accountFor, fmt, ftBalance } from './lib.mjs';
+const f = await startFacilitator(); 
+const sellerAcct = accountFor('seller').accountId;
+const s = await startSeller({ priceNear: '0.01' });
+const s2 = await startSeller({ port: 4404, priceNear: '0.5' });
+const bal = async (r) => ({ near: fmt(await accountFor(r).getBalance()), wNEAR: fmt(await ftBalance(accountFor(r).accountId)) });
+const before = { buyer: await bal('buyer'), seller: await bal('seller'), facilitator: await bal('facilitator') };
+const buyer = new PolicyBuyer({ perCall: '0.05', budget: '0.1', allow: [sellerAcct] });
+console.log("1) paid call (0.01 testnet NEAR):"); const a = await buyer.get("http://localhost:4403/quote"); console.log(JSON.stringify(a.body)); if(a.body.paid) console.log("explorer: https://testnet.nearblocks.io/txns/"+a.body.paid.transaction);
+console.log('2) over-cap call (0.5):'); console.log(JSON.stringify(await buyer.get('http://localhost:4404/quote')));
+console.log('3) replay the same signed payment:');
+const rp = await fetch('http://localhost:4403/quote', { headers: { 'x-payment': buyer.last, 'x-payer': buyer.acct.accountId } }); console.log(rp.status, JSON.stringify(await rp.json()));
+console.log('4) tampered payee (verify only):');
+const after = { buyer: await bal('buyer'), seller: await bal('seller'), facilitator: await bal('facilitator') };
+console.log('balances (testnet NEAR) before', before, 'after', after);
+
+console.log('policy log', JSON.stringify(buyer.log));
+process.exit(0);

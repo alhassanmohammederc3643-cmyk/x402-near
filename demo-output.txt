@@ -1,0 +1,18 @@
+1) paid call (0.01 testnet NEAR):
+{"pair":"NEAR/USD","price":"demo-3.14","paid":{"success":true,"transaction":"BbthyQEp9AiaxMip2KGC1V3xQfMpytjsHc2Z5eJyRrme","network":"near-testnet","payer":"x402near-buyer-inavt.testnet","relayer":"x402near-facilitator-inavt.testnet"}}
+explorer: https://testnet.nearblocks.io/txns/BbthyQEp9AiaxMip2KGC1V3xQfMpytjsHc2Z5eJyRrme
+2) over-cap call (0.5):
+{"status":"blocked-by-policy","reason":"over per-call cap"}
+3) replay the same signed payment:
+402 {"error":"payment rejected","reason":"replay"}
+4) tampered payee (verify only):
+balances (testnet NEAR) before {
+  buyer: { near: '8.99632', wNEAR: '0.99' },
+  seller: { near: '10.00651', wNEAR: '0.01' },
+  facilitator: { near: '9.98779', wNEAR: '0' }
+} after {
+  buyer: { near: '8.99632', wNEAR: '0.98' },
+  seller: { near: '10.00651', wNEAR: '0.02' },
+  facilitator: { near: '9.9875', wNEAR: '0' }
+}
+policy log [{"url":"http://localhost:4403/quote","paid":"10000000000000000000000","tx":"BbthyQEp9AiaxMip2KGC1V3xQfMpytjsHc2Z5eJyRrme"},{"url":"http://localhost:4404/quote","denied":"over per-call cap"}]
