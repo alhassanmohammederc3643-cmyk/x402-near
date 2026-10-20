@@ -1,0 +1,5 @@
+PASS first 0.02 paid
+PASS second 0.02 paid (at payee limit)
+PASS third blocked by per-payee limit
+PASS over per-call cap blocked
+PASS kill switch blocks everything

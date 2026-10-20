@@ -22,3 +22,11 @@ We tested native transfers inside a delegate action on testnet. The relayer paid
 
 ## Status
 Prototype. In-memory replay set. Single scheme (`exact`). No mainnet code path.
+
+## Policy engine (buyer side)
+Checked before anything is signed: network and asset allowlist, payee allowlist, per-call cap, per-payee limit, session budget, kill switch (`buyer.kill()`). A denied call signs nothing and costs nothing. `node policy-test.mjs` runs these with a stub seller (no chain calls).
+
+## Not done yet
+- Scoped function-call access key for the agent. `ft_transfer` needs a 1 yocto deposit, which function-call keys cannot attach (not tested here).
+- Persistent replay protection (current set is in memory; on-chain delegate nonces already block a second execution).
+- Real stablecoin asset. Testnet `wrap.testnet` only.
