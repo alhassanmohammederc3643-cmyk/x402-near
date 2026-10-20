@@ -14,7 +14,7 @@ We tested native transfers inside a delegate action on testnet. The relayer paid
 1. `npm install`
 2. Put testnet keys for roles `buyer`, `seller`, `facilitator` in `.keys.json` (git-ignored) or `NEAR_KEYS_JSON`. Fund the accounts from a testnet faucet.
 3. `node setup.mjs` - registers token storage, buyer wraps 1 testnet NEAR.
-4. `node demo.mjs` - see: one paid call settled onchain, an over-cap call blocked by policy, a replayed payment rejected, balances (buyer token balance down, seller up, buyer NEAR unchanged, facilitator NEAR down by gas).
+4. `node web.mjs` and open http://localhost:4500, press Run agent: an agent works through 7 tasks under policy (3 paid onchain, 4 blocked). Or `node demo.mjs` - see: one paid call settled onchain, an over-cap call blocked by policy, a replayed payment rejected, balances (buyer token balance down, seller up, buyer NEAR unchanged, facilitator NEAR down by gas).
 5. `node test.mjs` - verifier rejects wrong payee, amount, token, method and deposit.
 
 ## Files

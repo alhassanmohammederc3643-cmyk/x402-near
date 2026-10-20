@@ -1,0 +1,27 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>x402-near</title>
+<style>
+:root{--bg:#0b0d10;--card:#14181d;--line:#232a32;--tx:#e7ecf1;--mut:#8a97a5;--ok:#3ddc97;--bad:#ff6b6b;--acc:#7aa2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 -apple-system,Inter,system-ui,sans-serif;padding:32px}
+.w{max-width:880px;margin:0 auto}h1{font-size:24px;margin:0 0 4px}.sub{color:var(--mut);margin-bottom:20px}
+.tag{display:inline-block;background:#2a2410;color:#f5c542;border:1px solid #4a3d12;border-radius:6px;padding:2px 8px;font-size:12px;margin-left:8px;vertical-align:middle}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+button{background:var(--acc);color:#07101f;border:0;border-radius:8px;padding:10px 16px;font-weight:600;font-size:15px;cursor:pointer}button:disabled{opacity:.5}
+.row{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.row:first-of-type{border-top:0}
+.pill{min-width:84px;text-align:center;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+.paid{background:#10301f;color:var(--ok)}.blocked{background:#3a1717;color:var(--bad)}.grow{flex:1}.m{color:var(--mut);font-size:13px}
+a{color:var(--acc);text-decoration:none}code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.k{color:var(--mut);font-size:12px}.v{font-size:18px;font-weight:600}
+</style><div class=w>
+<h1>x402-near <span class=tag>TESTNET - no real value</span></h1>
+<div class=sub>An AI agent pays per API call on NEAR. A facilitator relays the signed payment and pays gas. A policy engine decides first.</div>
+<div class=card><button id=b onclick=run()>Run agent</button> <span class=m id=st></span>
+<div class=m style="margin-top:10px">Policy: max 0.05 wNEAR per call, session budget 0.07 wNEAR, payee allowlist (seller account only).</div></div>
+<div class=card id=bal style="display:none"></div><div class=card id=log style="display:none"></div></div>
+<script>
+const ex=h=>`https://testnet.nearblocks.io/txns/${h}`;
+function draw(d){if(!d)return;bal.style.display=log.style.display='block';
+bal.innerHTML=`<div class=grid><div><div class=k>Buyer wNEAR</div><div class=v>${d.before.buyerWNEAR} &rarr; ${d.after.buyerWNEAR}</div></div><div><div class=k>Seller wNEAR</div><div class=v>${d.before.sellerWNEAR} &rarr; ${d.after.sellerWNEAR}</div></div><div><div class=k>Spent this session</div><div class=v>${d.spentWNEAR} wNEAR</div></div></div><div class=m style="margin-top:10px">Buyer ${d.buyer} holds no gas for these calls. Facilitator pays it.</div>`;
+log.innerHTML=d.steps.map(s=>`<div class=row><span class="pill ${s.result}">${s.result}</span><div class=grow>${s.task}<div class=m>${s.path}${s.reason?' - '+s.reason:''}</div></div>${s.tx?`<a href="${ex(s.tx)}"><code>${s.tx.slice(0,10)}...</code></a>`:''}</div>`).join('')}
+async function run(){b.disabled=true;st.textContent='running on testnet...';const r=await fetch('/api/run',{method:'POST'});draw(await r.json());b.disabled=false;st.textContent='done'}
+fetch('/api/last').then(r=>r.json()).then(draw);
+</script>
