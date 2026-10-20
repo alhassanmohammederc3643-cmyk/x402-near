@@ -2,6 +2,14 @@
 
 HTTP 402 pay-per-call for AI agents on NEAR. **Testnet only. Test tokens, no real value. Work in progress, built for NEAR HACKATHON (Nov 2026).**
 
+## Provenance: what was built when
+NEAR HACKATHON development window: 1 Nov 2026 00:00 UTC to 14 Nov 2026 23:59 UTC.
+
+- **Pre-window (built 20 Oct 2026, before the event):** the whole prototype in this repo as of the git tag `pre-event-prototype-2026-10-20`: seller, facilitator, policy buyer, web demo, tests. It was started before the hackathon opened and is not hackathon work.
+- **In-window (1-14 Nov 2026):** nothing yet. This section lists only commits dated inside the window, and the git history is the record.
+
+The organizers' published terms (nearhackathon.com, HACKATHON.md, read 20 Oct 2026) say nothing about prior work. Any demo post or submission should describe this repo as a pre-event prototype extended during the hackathon, never as built entirely during it.
+
 ## What it does
 A seller API answers `402 Payment Required` with price and payee. A buyer agent signs a NEP-366 delegate action that calls `ft_transfer` on a NEP-141 token (testnet `wrap.testnet`). A facilitator checks the signed payload, relays it and pays the gas. The buyer holds no gas and sends no transaction. The seller then serves the data.
 
