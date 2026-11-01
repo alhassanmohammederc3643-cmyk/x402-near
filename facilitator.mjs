@@ -32,9 +32,9 @@ export async function verify(req, b64) {
   return null;
 }
 
-export function startFacilitator(port = 4402, { storePath } = {}) {
+export function startFacilitator(port = 4402, { storePath, relayer } = {}) {
   const store = new ReplayStore(storePath);
-  const acct = accountFor('facilitator');
+  const acct = relayer || accountFor('facilitator'); // relayer is injectable for crash tests
   const srv = http.createServer(async (rq, rs) => {
     const send = (c, o) => { rs.writeHead(c, { 'content-type': 'application/json' }); rs.end(JSON.stringify(o)); };
     if (rq.method !== 'POST') return send(404, {});

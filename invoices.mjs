@@ -27,6 +27,7 @@ export function startInvoices({ port = 4405, facilitator = 'http://localhost:440
       const inv = invoices.get(m[1]);
       if (!inv) return send(404, { error: 'unknown invoice' });
       if (inv.status === 'paid') return send(409, { error: 'invoice already settled', tx: inv.tx });
+      if (inv.status === 'paying') return send(409, { error: 'settlement already in flight for this invoice' });
       const requirements = { scheme: 'exact', network: 'near-testnet', asset: TOKEN, assetNote: 'wNEAR on NEAR testnet, no real value', maxAmountRequired: yocto(inv.amount).toString(), payTo: inv.payee, payer: rq.headers['x-payer'], resource: url.pathname, description: `invoice ${inv.id}: ${inv.memo}` };
       const hdr = rq.headers['x-payment'];
       if (!hdr) return send(402, { x402Version: 1, error: 'payment required', accepts: [requirements] });
