@@ -29,7 +29,7 @@ async function run(){b.disabled=true;st.textContent='running on testnet...';cons
 fetch('/api/last').then(r=>r.json()).then(draw);
 
 const pill=s=>`<span class="pill ${s==='paid'?'paid':'blocked'}">${s}</span>`;
-function drawInv(d){if(!d)return;inv.innerHTML=(d.invoices||[]).map(i=>`<div class=row>${pill(i.status)}<div class=grow><code>${i.id}</code> - ${i.memo}<div class=m>${i.amount} wNEAR to ${i.payee}</div></div>${i.tx?`<a href="${ex(i.tx)}"><code>${i.tx.slice(0,10)}...</code></a>`:''}</div>`).join('')}
+function drawInv(d){if(!d)return;const skipped={};(d.lastBatch&&d.lastBatch.results||[]).forEach(r=>{if(r.result==='skipped')skipped[r.id]=r.reason});inv.innerHTML=(d.invoices||[]).map(i=>`<div class=row>${pill(i.status)}<div class=grow><code>${i.id}</code> - ${i.memo}<div class=m>${i.amount} wNEAR to ${i.payee}${i.status==='unpaid'&&skipped[i.id]?' - skipped by policy: '+skipped[i.id]:''}</div></div>${i.tx?`<a href="${ex(i.tx)}"><code>${i.tx.slice(0,10)}...</code></a>`:''}</div>`).join('')}
 async function payBatch(){b2.disabled=true;st2.textContent='paying on testnet...';const r=await fetch('/api/pay-invoices',{method:'POST'});drawInv(await r.json());b2.disabled=false;st2.textContent='done'}
 fetch('/api/invoices').then(r=>r.json()).then(drawInv);
 </script>
