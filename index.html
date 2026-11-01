@@ -16,7 +16,10 @@ a{color:var(--acc);text-decoration:none}code{font-family:ui-monospace,Menlo,mono
 <div class=sub>An AI agent pays per API call on NEAR. A facilitator relays the signed payment and pays gas. A policy engine decides first.</div>
 <div class=card><button id=b onclick=run()>Run agent</button> <span class=m id=st></span>
 <div class=m style="margin-top:10px">Policy: max 0.05 wNEAR per call, session budget 0.07 wNEAR, payee allowlist (seller account only).</div></div>
-<div class=card id=bal style="display:none"></div><div class=card id=log style="display:none"></div></div>
+<div class=card id=bal style="display:none"></div><div class=card id=log style="display:none"></div>
+<div class=card><button id=b2 onclick=payBatch()>Pay invoice batch</button> <span class=m id=st2></span>
+<div class=m style="margin-top:10px">Track 08 demo: four simulated invoices in testnet wNEAR. The accounts-payable agent pays the ones that pass policy (per-call cap, budget, payee allowlist) and skips the rest. Each invoice settles at most once.</div>
+<div id=inv style="margin-top:6px"></div></div></div>
 <script>
 const ex=h=>`https://testnet.nearblocks.io/txns/${h}`;
 function draw(d){if(!d)return;bal.style.display=log.style.display='block';
@@ -24,4 +27,9 @@ bal.innerHTML=`<div class=grid><div><div class=k>Buyer wNEAR</div><div class=v>$
 log.innerHTML=d.steps.map(s=>`<div class=row><span class="pill ${s.result}">${s.result}</span><div class=grow>${s.task}<div class=m>${s.path}${s.reason?' - '+s.reason:''}</div></div>${s.tx?`<a href="${ex(s.tx)}"><code>${s.tx.slice(0,10)}...</code></a>`:''}</div>`).join('')}
 async function run(){b.disabled=true;st.textContent='running on testnet...';const r=await fetch('/api/run',{method:'POST'});draw(await r.json());b.disabled=false;st.textContent='done'}
 fetch('/api/last').then(r=>r.json()).then(draw);
+
+const pill=s=>`<span class="pill ${s==='paid'?'paid':'blocked'}">${s}</span>`;
+function drawInv(d){if(!d)return;inv.innerHTML=(d.invoices||[]).map(i=>`<div class=row>${pill(i.status)}<div class=grow><code>${i.id}</code> - ${i.memo}<div class=m>${i.amount} wNEAR to ${i.payee}</div></div>${i.tx?`<a href="${ex(i.tx)}"><code>${i.tx.slice(0,10)}...</code></a>`:''}</div>`).join('')}
+async function payBatch(){b2.disabled=true;st2.textContent='paying on testnet...';const r=await fetch('/api/pay-invoices',{method:'POST'});drawInv(await r.json());b2.disabled=false;st2.textContent='done'}
+fetch('/api/invoices').then(r=>r.json()).then(drawInv);
 </script>
