@@ -3,9 +3,10 @@ import { accountFor, provider, nearApi, yocto } from './lib.mjs';
 const { transactions } = nearApi;
 import { encodeSignedDelegate } from '@near-js/transactions';
 export class PolicyBuyer {
-  constructor({ perCall = '0.05', budget = '0.1', allow = [], perPayee = {} } = {}) {
+  constructor({ perCall = '0.05', budget = '0.1', allow = [], perPayee = {}, acct } = {}) {
     this.killed = false; this.perPayee = Object.fromEntries(Object.entries(perPayee).map(([k, v]) => [k, yocto(v)])); this.paidTo = {};
-    this.acct = accountFor('buyer'); this.perCall = yocto(perCall); this.budget = yocto(budget); this.spent = 0n; this.allow = allow; this.log = [];
+    this.acct = acct || accountFor('buyer'); // acct is injectable so tests can run with no keys and no chain
+    this.perCall = yocto(perCall); this.budget = yocto(budget); this.spent = 0n; this.allow = allow; this.log = [];
   }
   kill() { this.killed = true; } // kill switch: nothing is signed after this
   async get(url) {
