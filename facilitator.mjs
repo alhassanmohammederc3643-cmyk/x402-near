@@ -7,8 +7,8 @@ import { deserialize } from 'borsh';
 import { SCHEMA, actionCreators, encodeDelegateAction } from '@near-js/transactions';
 import { PublicKey } from '@near-js/crypto';
 import { accountFor, provider } from './lib.mjs';
+import { ReplayStore } from './replay-store.mjs';
 
-const seen = new Set();
 export const decodeSigned = (b64) => deserialize(SCHEMA.SignedDelegate, Buffer.from(b64, 'base64'));
 
 export async function verify(req, b64) {
@@ -32,7 +32,8 @@ export async function verify(req, b64) {
   return null;
 }
 
-export function startFacilitator(port = 4402) {
+export function startFacilitator(port = 4402, { storePath } = {}) {
+  const store = new ReplayStore(storePath);
   const acct = accountFor('facilitator');
   const srv = http.createServer(async (rq, rs) => {
     const send = (c, o) => { rs.writeHead(c, { 'content-type': 'application/json' }); rs.end(JSON.stringify(o)); };
@@ -44,8 +45,8 @@ export function startFacilitator(port = 4402) {
       if (rq.url === '/verify') return send(200, { isValid: !why, reason: why });
       if (rq.url !== '/settle') return send(404, {});
       if (why) return send(200, { success: false, reason: why });
-      if (seen.has(payload)) return send(200, { success: false, reason: 'replay' });
-      seen.add(payload);
+      if (store.has(payload)) return send(200, { success: false, reason: 'replay' });
+      store.add(payload);
       const sd = decodeSigned(payload);
       const out = await acct.signAndSendTransaction({ receiverId: sd.delegateAction.senderId, actions: [actionCreators.signedDelegate(sd)] });
       const failed = JSON.stringify(out).includes('"Failure"');
