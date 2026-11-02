@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@near-js/transactions": "^2.5.1",
     "borsh": "^2.0.0",
