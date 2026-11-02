@@ -1,11 +1,12 @@
 import { startFacilitator } from './facilitator.mjs';
-import { startSeller } from './seller.mjs';
+import { startSeller, ROUTES } from './seller.mjs';
 import { PolicyBuyer } from './buyer.mjs';
 import { accountFor, fmt, ftBalance } from './lib.mjs';
 const f = await startFacilitator(); 
 const sellerAcct = accountFor('seller').accountId;
 const s = await startSeller({ priceNear: '0.01' });
-const s2 = await startSeller({ port: 4404, priceNear: '0.5' });
+const bigRoutes = { '/quote': { ...ROUTES['/quote'], price: '0.5' } }; // a genuinely over-cap route
+const s2 = await startSeller({ port: 4404, routes: bigRoutes });
 const bal = async (r) => ({ near: fmt(await accountFor(r).getBalance()), wNEAR: fmt(await ftBalance(accountFor(r).accountId)) });
 const before = { buyer: await bal('buyer'), seller: await bal('seller'), facilitator: await bal('facilitator') };
 const buyer = new PolicyBuyer({ perCall: '0.05', budget: '0.1', allow: [sellerAcct] });

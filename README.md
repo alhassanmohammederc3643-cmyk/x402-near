@@ -38,7 +38,7 @@ Tests that need no keys and no chain (stub facilitator, nothing signed on a deny
 8. `node concurrent-test.mjs` - see 3 PASS: two overlapping pay attempts on one invoice settle exactly once.
 
 Live testnet runs:
-9. `node web.mjs` and open http://localhost:4500. Press **Run agent** - see 7 tasks: 3 paid onchain with explorer links, 4 blocked by policy with reasons; buyer wNEAR down, seller wNEAR up. Press **Pay invoice batch** - see 2 of 4 invoices paid with transaction links, 2 skipped with reasons; each paid invoice settles exactly once.
+9. `node web.mjs` and open http://localhost:4500. Press **Run agent** - see 7 tasks: 4 paid onchain with explorer links, 3 blocked by policy with reasons; buyer wNEAR down, seller wNEAR up. Press **Pay invoice batch** - see 2 of 4 invoices paid with transaction links, 2 skipped with reasons; each paid invoice settles exactly once.
 10. `node demo.mjs` - see one paid call settled onchain (explorer link printed), an over-cap call blocked, a replayed payment rejected, and balances moving as expected.
 11. `node invoice-demo.mjs` - see the accounts-payable agent pay 2 of 4 invoices onchain, skip the rest, and a repeated payment rejected with 409.
 12. `node test.mjs` - see the facilitator verifier reject wrong payee, amount, token, method and deposit.
